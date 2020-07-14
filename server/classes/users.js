@@ -18,8 +18,9 @@ class Users {
         return this.persons;
     }
 
-    getAllPersonsByGroup(sala) {
-        //
+    getAllPersonsByGroup(group) {
+        let personOnGroup = this.persons.filter(person => person.group === group);
+        return personOnGroup;
     }
 
     deletePerson(id) {

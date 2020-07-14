@@ -15,22 +15,22 @@ io.on('connection', (client) => {
 
         client.join(data.group);
 
-        let persons = users.addPerson(client.id, data.name, data.group);
-        client.broadcast.emit('personList', users.getAllPersons());
-        callback(persons);
+        users.addPerson(client.id, data.name, data.group);
+        client.broadcast.to(data.group).emit('personList', users.getAllPersonsByGroup(data.group));
+        callback(users.getAllPersonsByGroup(data.group));
     });
 
     client.on('createMessage', (data) => {
         let person = users.getPerson(client.id)
         let message = createMessage(person.name, data.message);
-        client.broadcast.emit('createMessage', message)
+        client.broadcast.to(person.group).emit('createMessage', message);
     });
 
     client.on('disconnect', () => {
         let deletedPerson = users.deletePerson(client.id);
         //{ user: 'admin', message: `${deletedPerson.name} abandono el chat` }
-        client.broadcast.emit('createMessage', createMessage('admin', `${deletedPerson.name} left`));
-        client.broadcast.emit('personList', users.getAllPersons());
+        client.broadcast.to(deletedPerson.group).emit('createMessage', createMessage('admin', `${deletedPerson.name} left`));
+        client.broadcast.to(deletedPerson.group).emit('personList', users.getAllPersonsByGroup(deletedPerson.group));
     });
 
     client.on('privateMessage', data => {
