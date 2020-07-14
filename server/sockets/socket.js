@@ -28,7 +28,6 @@ io.on('connection', (client) => {
 
     client.on('disconnect', () => {
         let deletedPerson = users.deletePerson(client.id);
-        //{ user: 'admin', message: `${deletedPerson.name} abandono el chat` }
         client.broadcast.to(deletedPerson.group).emit('createMessage', createMessage('admin', `${deletedPerson.name} left`));
         client.broadcast.to(deletedPerson.group).emit('personList', users.getAllPersonsByGroup(deletedPerson.group));
     });
